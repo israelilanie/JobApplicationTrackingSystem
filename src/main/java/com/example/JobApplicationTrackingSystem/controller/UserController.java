@@ -4,8 +4,6 @@ import com.example.JobApplicationTrackingSystem.dto.UserCreateDTO;
 import com.example.JobApplicationTrackingSystem.dto.UserDTO;
 import com.example.JobApplicationTrackingSystem.exception.DuplicateUserException;
 import com.example.JobApplicationTrackingSystem.exception.UserNotFoundException;
-import com.example.JobApplicationTrackingSystem.model.User;
-import com.example.JobApplicationTrackingSystem.service.JobApplicationService;
 import com.example.JobApplicationTrackingSystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +13,9 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
     UserService userService;
-    JobApplicationService jobApplicationService;
 
-    public UserController(UserService userService, JobApplicationService jobApplicationService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jobApplicationService = jobApplicationService;
     }
 
     @GetMapping("/all")
@@ -37,11 +33,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(Long id) throws UserNotFoundException {
+    public void deleteById(@PathVariable Long id) throws UserNotFoundException {
         userService.deleteUserById(id);
     }
 
-    @PostMapping("/{email}/{password}")
+    @PostMapping
     public UserDTO createUser(@RequestBody UserCreateDTO userCreateDTO) throws DuplicateUserException {
         return userService.registerUser(userCreateDTO);
     }

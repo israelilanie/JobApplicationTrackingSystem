@@ -4,10 +4,7 @@ import com.example.JobApplicationTrackingSystem.dto.JobApplicationCreateDTO;
 import com.example.JobApplicationTrackingSystem.dto.JobApplicationResponseDTO;
 import com.example.JobApplicationTrackingSystem.exception.DuplicateJobApplicationException;
 import com.example.JobApplicationTrackingSystem.exception.JobApplicationNotFoundException;
-import com.example.JobApplicationTrackingSystem.model.JobApplication;
-import com.example.JobApplicationTrackingSystem.model.User;
 import com.example.JobApplicationTrackingSystem.service.JobApplicationService;
-import com.example.JobApplicationTrackingSystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/job")
 public class JobAppController {
-    UserService userService;
     JobApplicationService jobApplicationService;
 
-    public JobAppController(UserService userService, JobApplicationService jobApplicationService) {
-        this.userService = userService;
+    public JobAppController(JobApplicationService jobApplicationService) {
         this.jobApplicationService = jobApplicationService;
     }
 
@@ -28,9 +23,9 @@ public class JobAppController {
         return jobApplicationService.getAllJobApplications();
     }
 
-    @GetMapping("/all-user")
-    public List<JobApplicationResponseDTO> getAllJobsUser(@RequestBody User user){
-        return jobApplicationService.getUserAllJob(user);
+    @GetMapping("/all-user/{userId}")
+    public List<JobApplicationResponseDTO> getAllJobsUser(@PathVariable Long userId){
+        return jobApplicationService.getUserAllJob(userId);
     }
     @PostMapping("/{id}")
     public JobApplicationResponseDTO createJobApp(@PathVariable Long id, @RequestBody JobApplicationCreateDTO jobApplicationCreateDTO) throws DuplicateJobApplicationException {
@@ -38,13 +33,13 @@ public class JobAppController {
         return jobApplicationService.createJobApplication(id,jobApplicationCreateDTO);
     }
 
-    @GetMapping("/userjob/{id}")
-    public JobApplicationResponseDTO findById(@PathVariable Long id, @RequestBody User user) throws JobApplicationNotFoundException {
-        return jobApplicationService.findById(id,user);
+    @GetMapping("/user/{userId}/job/{id}")
+    public JobApplicationResponseDTO findById(@PathVariable Long userId, @PathVariable Long id) throws JobApplicationNotFoundException {
+        return jobApplicationService.findById(id, userId);
     }
 
-    @GetMapping("/count")
-    public Long countByUser(@RequestBody User user){
-        return jobApplicationService.countByUser(user);
+    @GetMapping("/count/{userId}")
+    public Long countByUser(@PathVariable Long userId){
+        return jobApplicationService.countByUser(userId);
     }
 }
